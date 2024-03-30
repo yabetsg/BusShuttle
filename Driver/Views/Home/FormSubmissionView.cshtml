@@ -1,0 +1,64 @@
+@{
+    ViewData["Title"] = "Form Submission Result";
+}
+
+<main class="container">
+    <form action="" class="text-center border" id="submissionForm" >
+        <!-- Your form fields here -->
+
+
+        <div class="form-group">
+            <label for="stop" class="col-form-label col-form-label-lg">Stop:</label>
+
+            <select name="stop" id="stop" class="form-control text-center">
+                <option value="">Select Stop</option>
+                @foreach (var stop in ViewBag.Stops)
+                {
+                    <option value="@stop">@stop</option>
+                }
+            </select>
+
+        </div>
+
+
+        <div class="form-group ">
+            <label for="boarded" class="col-form-label col-form-label-lg">Boarded:</label>
+                <div class="row ">
+                    <div class="col-sm-5">
+                        <button class="btn btn-secondary btn-lg w-100" type="button">-</button>
+                    </div>
+                    <div class="col-sm-2">
+                    <input type="text" id="boarded" class="form-control form-control-lg input-group-text" value="0" readonly>
+                    </div>
+                    <div  class="col-sm-5">
+                        <button class="btn btn-primary btn-lg w-100" type="button">+</button>
+                    </div>
+                </div>
+
+        </div>
+
+        <button type="button" onclick="displayMessage()" class="btn btn-success">Submit Entry</button>
+    </form>
+
+    <div id="submittedMessage" class="alert alert-success" style="display: none;">
+        <button type="button" class="close" onclick="dismissMessage()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        Your entry has been added
+    </div>
+
+    <script>
+        document.getElementById('submissionForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            displayMessage();
+        });
+
+        function dismissMessage() {
+            document.getElementById('submittedMessage').style.display = 'none';
+        }
+
+        function displayMessage() {
+            document.getElementById('submittedMessage').style.display = 'block';
+        }
+    </script>
+</main>

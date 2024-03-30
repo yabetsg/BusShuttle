@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <form method="post" action="/form">
+        <div class="row">
+            <div  class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <h3>What is your bus number</h3>
+                   <select name="BusNumber" id="BusNumber" class="form-control">
+                        <option value="Select a bus"></option>
+                        @foreach (var busNumber in ViewBag.BusNumbers)
+                        {
+                            <option value="@busNumber">@busNumber</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div  class="col-sm-2"></div>
+        </div>
+
+        <div class="row">
+            <div  class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <h3>What is your name</h3>
+                    <select name="driverOption" id="driverOption" class="form-control">
+                        <option value="Select your name"></option>
+                        @foreach (var driver in ViewBag.Drivers)
+                        {
+                            <option value="@driver">@driver</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div  class="col-sm-2"></div>
+        </div>
+
+        <div class="row">
+            <div  class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <h3>What loop will you be on</h3>
+                    <select name="LoopOption" id="LoopOption" class="form-control">
+                        <option value="Select a loop"></option>
+                        @foreach (var loopOption in ViewBag.LoopOptions)
+                        {
+                            <option value="@loopOption">@loopOption</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div  class="col-sm-2"></div>
+        </div>
+
+
+
+        <div class="row">
+            <div  class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <button class="btn btn-xl btn-block btn-success">Submit</button>
+                </div>
+            </div>
+            <div  class="col-sm-2"></div>
+        </div>
+        
+    </form>
+</div>
