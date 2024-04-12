@@ -1,0 +1,58 @@
+@model WebMvc.Models.EntryCreateModel
+@{
+    ViewData["Title"] = "Create Entry";
+}
+<h2>Create Task</h2>
+<a asp-action="Index">Back to List</a>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateEntry">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <input type="hidden" asp-for="" /> *@
+            <div class="form-group">
+                <label asp-for="BusNumber" class="control-label"></label>
+                <input asp-for="BusNumber" class="form-control" />
+                <span asp-validation-for="BusNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DriverName" class="control-label"></label>
+                <input asp-for="DriverName" class="form-control" />
+                <span asp-validation-for="DriverName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LoopName" class="control-label"></label>
+                <input asp-for="LoopName" class="form-control" />
+                <span asp-validation-for="LoopName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StopName" class="control-label"></label>
+                <input asp-for="StopName" class="form-control" />
+                <span asp-validation-for="StopName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Boarded" class="control-label"></label>
+                <input asp-for="Boarded" class="form-control" />
+                <span asp-validation-for="Boarded" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="LeftBehind" class="control-label"></label>
+                <input asp-for="LeftBehind" class="form-control" />
+                <span asp-validation-for="LeftBehind" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

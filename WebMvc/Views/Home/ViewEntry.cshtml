@@ -1,0 +1,71 @@
+﻿@model WebMvc.Models.EntryViewModel
+@{
+    ViewData["Title"] = "View Task";
+}
+
+<h2>View Entry</h2>
+<a asp-action="Index">Back to Entry</a>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Id
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Id
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BusNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BusNumber)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DriverName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DriverName)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LoopName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LoopName)
+        </dd>
+    </dl>
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StopName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StopName)
+        </dd>
+    </dl>
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Boarded)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Boarded)
+        </dd>
+    </dl>
+
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LeftBehind)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LeftBehind)
+        </dd>
+    </dl>
+
+
+</div>

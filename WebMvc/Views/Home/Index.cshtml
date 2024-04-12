@@ -1,0 +1,62 @@
+﻿@model IEnumerable<WebMvc.Models.EntryViewModel>
+@{
+    ViewData["Title"] = "Bus Log";
+}
+<h2>Bus Log</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BusNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoopName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StopName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Boarded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeftBehind)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+       
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BusNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoopName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StopName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Boarded)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.LeftBehind)
+                </td>
+                <td>
+                    <a asp-action="EditEntry" asp-route-id="@item.Id">Edit</a> | <a asp-action="ViewEntry"
+                        asp-route-id="@item.Id">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="CreateEntry">Add Entry</a>
