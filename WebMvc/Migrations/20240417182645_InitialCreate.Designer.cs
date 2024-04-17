@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebMvc.Migrations
 {
     [DbContext(typeof(BusContext))]
-    [Migration("20240412215448_InitialCreate")]
+    [Migration("20240417182645_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -17,6 +17,25 @@ namespace WebMvc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
+
+            modelBuilder.Entity("WebMvc.Models.DriverModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Drivers");
+                });
 
             modelBuilder.Entity("WebMvc.Models.EntryModel", b =>
                 {
@@ -48,6 +67,21 @@ namespace WebMvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Entries");
+                });
+
+            modelBuilder.Entity("WebMvc.Models.LoopModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Loops");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,22 @@
+﻿@{
+  ViewData["Title"] = "Bus Log";
+}
+
+<h2>Bus Log</h2>
+<div class="container">
+  <div class="dropdown d-flex">
+    <button class="btn btn-secondary dropdown-toggle flex-grow-1" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+      Manage Data
+    </button>
+    <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item text-center border border-2" asp-action="ViewEntry">Entries</a>
+      <a class="dropdown-item text-center " asp-action="ViewDriver">Drivers</a>
+      <a class="dropdown-item text-center border border-2" asp-action="ViewLoop">Loops</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

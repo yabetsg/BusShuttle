@@ -1,71 +1,62 @@
-﻿@model WebMvc.Models.EntryViewModel
+﻿@model IEnumerable<WebMvc.Models.EntryViewModel>
 @{
-    ViewData["Title"] = "View Task";
+    ViewData["Title"] = "Entries";
 }
 
-<h2>View Entry</h2>
-<a asp-action="Index">Back to Entry</a>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Id
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Id
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.BusNumber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.BusNumber)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DriverName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DriverName)
-        </dd>
-    </dl>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LoopName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LoopName)
-        </dd>
-    </dl>
+<table class="table">
+    <a asp-action="ViewManager">Back</a>
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BusNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoopName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StopName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Boarded)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeftBehind)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+       
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BusNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LoopName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StopName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Boarded)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.LeftBehind)
+                </td>
+                <td>
+                    <a asp-action="EditEntry" asp-route-id="@item.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StopName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StopName)
-        </dd>
-    </dl>
-
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Boarded)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Boarded)
-        </dd>
-    </dl>
-
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LeftBehind)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LeftBehind)
-        </dd>
-    </dl>
-
-
-</div>
+@* <a asp-action="CreateEntry">Add Entry</a> *@

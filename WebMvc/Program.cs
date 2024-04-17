@@ -14,6 +14,8 @@ public class Program
 
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<IEntryService,EntryService>();
+        builder.Services.AddScoped<ILoopService,LoopService>();
+        builder.Services.AddScoped<IDriverService,DriverService>();
         var app = builder.Build();
 
 
