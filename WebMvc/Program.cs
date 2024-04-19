@@ -9,7 +9,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
+        builder.Services.AddSession();
         builder.Services.AddDbContext<BusContext>(Options => Options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddControllersWithViews();
@@ -28,7 +28,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
+        app.UseSession();
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 

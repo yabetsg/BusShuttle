@@ -1,23 +1,37 @@
 @model WebMvc.Models.EntryCreateModel
 
 
-<form asp-action="CreateEntry">
+<form asp-action="CreateEntry" class="fs-1 text-center">
     <div class="form-group">
-        <label asp-for="BusNumber">What is your bus number?</label>
-        <select class="form-control" asp-for="BusNumber" name="BusNumber" asp-items="@(ViewBag.BusNumber as SelectList)">
-            <option value=""></option>
-        </select>
+        <div>
+            <label asp-for="BusNumber">What is your bus number?</label>
+            <select class="form-control fs-4 form-select" asp-for="BusNumber" name="BusNumber"
+                asp-items="@(ViewBag.BusNumber as SelectList)">
+                <option value=""></option>
+            </select>
+            <span asp-validation-for="BusNumber" class="text-danger"></span>
+        </div>
 
-        <label asp-for="DriverName">What is your name?</label>
-        <select class="form-control" asp-for="DriverName" name="DriverName" asp-items="@(ViewBag.FullName as SelectList)">
-            <option value=""></option>
-        </select>
+        <div>
+            <label asp-for="DriverName">What is your name?</label>
+            <select class="form-control fs-4 form-select" asp-for="DriverName" name="DriverName"
+                asp-items="@(ViewBag.FullName as SelectList)">
+                <option value=""></option>
+            </select>
+            <span asp-validation-for="DriverName" class="text-danger"></span>
+        </div>
 
-        <label asp-for="LoopName">What loop will you be on?</label>
-        <select class="form-control" asp-for="LoopName" name="LoopName" asp-items="@(ViewBag.LoopName as SelectList)">
-            <option value=""></option>
-        </select>
+        <div>
+            <label asp-for="LoopName">What loop will you be on?</label>
+            <select class="form-control fs-4 form-select" asp-for="LoopName" name="LoopName"
+                asp-items="@(ViewBag.LoopName as SelectList)">
+                <option value=""></option>
+            </select>
+            <span asp-validation-for="LoopName" class="text-danger"></span>
+        </div>
+
+
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-success fs-1 m-2">Start</button>
 </form>

@@ -80,17 +80,16 @@ public class HomeController : Controller
 
     public IActionResult DriverEntryView()
     {
-        var BusNumber = (int)TempData["BusNumber"];
 
-        var DriverName = (string)TempData["DriverName"];
-        var LoopName = (string)TempData["LoopName"];
-
-        var StopName = (string)TempData["StopName"];
+        var BusNumber = HttpContext.Session.GetInt32("BusNumber");
+        var DriverName = HttpContext.Session.GetString("DriverName");
+        var LoopName = HttpContext.Session.GetString("LoopName");
 
         var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
         ViewBag.BusNumber = BusNumber;
         ViewBag.DriverName = DriverName;
         ViewBag.LoopName = LoopName;
+
         ViewBag.StopName = new SelectList(stops, "Name", "Name");
 
         return View();
@@ -103,9 +102,22 @@ public class HomeController : Controller
         if (ModelState.IsValid)
         {
             entryService.CreateEntry(model.BusNumber, model.DriverName, model.LoopName, model.StopName, model.Boarded, model.LeftBehind);
+            return new EmptyResult();
+
         }
 
-        return View("ViewDriverConfig");
+         var BusNumber = HttpContext.Session.GetInt32("BusNumber");
+        var DriverName = HttpContext.Session.GetString("DriverName");
+        var LoopName = HttpContext.Session.GetString("LoopName");
+
+        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+        ViewBag.BusNumber = BusNumber;
+        ViewBag.DriverName = DriverName;
+        ViewBag.LoopName = LoopName;
+
+        ViewBag.StopName = new SelectList(stops, "Name", "Name");
+        
+        return View("DriverEntryView",model);
     }
 
 
@@ -224,12 +236,22 @@ public class HomeController : Controller
     {
         if (ModelState.IsValid)
         {
-            TempData["BusNumber"] = busNumber;
-            TempData["DriverName"] = driverName;
-            TempData["LoopName"] = loopName;
+            HttpContext.Session.SetInt32("BusNumber", busNumber);
+            HttpContext.Session.SetString("DriverName", driverName);
+            HttpContext.Session.SetString("LoopName", loopName);
+
             return RedirectToAction("DriverEntryView");
         }
-        return View();
+        var buses = busService.GetAllBuses().Select(e => BusViewModel.FromBus(e));
+        var drivers = driverService.GetAllDrivers().Select(e => DriverViewModel.FromDriver(e));
+        var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
+        ViewBag.BusNumber = new SelectList(buses, "BusNumber", "BusNumber");
+        ViewBag.FirstName = new SelectList(drivers, "FirstName", "FirstName");
+        ViewBag.LastName = new SelectList(drivers, "LastName", "LastName");
+        ViewBag.LoopName = new SelectList(loops, "Name", "Name");
+        var fullNames = drivers.Select(d => new { FullName = $"{d.FirstName} {d.LastName}", Id = d.Id });
+        ViewBag.FullName = new SelectList(fullNames, "FullName", "FullName");
+        return View("ViewDriverConfig");
     }
 
 

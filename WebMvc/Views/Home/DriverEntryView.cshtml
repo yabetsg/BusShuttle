@@ -1,29 +1,66 @@
 @model WebMvc.Models.EntryCreateModel
 
 
-<form asp-action="CreateDriverEntry">
+
+
+<form asp-action="CreateDriverEntry" class="text-center fs-1" id="submissionForm">
     <div class="form-group">
         <div class="d-flex ">
-            <input asp-for="DriverName" class="form-control" value="@ViewBag.DriverName" readonly />
-            <input asp-for="LoopName" class="form-control" value="@ViewBag.LoopName" readonly />
-            <input asp-for="BusNumber" class="form-control" value="@ViewBag.BusNumber" readonly />
         </div>
 
-        <label asp-for="StopName" class="control-label">Stop Name:</label>
-        <select class="form-control" asp-for="StopName" asp-items="@(ViewBag.StopName as SelectList)">
+        <label asp-for="StopName" class="control-label">Stop</label>
+        <select class="form-control fs-4 form-select" asp-for="StopName" asp-items="@(ViewBag.StopName as SelectList)">
             <option value=""></option>
         </select>
 
 
 
-        <label asp-for="Boarded" class="control-label">Boarded:</label>
-        <input asp-for="Boarded" class="form-control" />
+        <label asp-for="Boarded" class="control-label">Boarded</label>
+        <input asp-for="Boarded" class="form-control fs-4" />
         <span asp-validation-for="Boarded" class="text-danger"></span>
 
-        <label asp-for="LeftBehind" class="control-label">Left Behind:</label>
-        <input asp-for="LeftBehind" class="form-control" />
+        <label asp-for="LeftBehind" class="control-label">Left Behind</label>
+        <input asp-for="LeftBehind" class="form-control fs-4" />
         <span asp-validation-for="LeftBehind" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit Entry</button>
+    <button type="submit" class="btn btn-success fs-1 m-2">Submit Entry</button>
 </form>
+
+  <div id="submittedMessage" class="alert alert-success" style="display: none;">
+        Your entry has been added
+        <button type="button" class="close" onclick="dismissMessage()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <script>
+        document.getElementById('submissionForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            displayMessage();
+        });
+
+        function dismissMessage() {
+            document.getElementById('submittedMessage').style.display = 'none';
+        }
+
+        function displayMessage() {
+            document.getElementById('submittedMessage').style.display = 'flex';
+            document.getElementById('submittedMessage').style.justifyContent = 'space-between';
+        }
+    </script>
+<br>
+<table class="table table-striped fs-6">
+  <thead >
+    <tr class="text-center">
+      <th class="fw-normal" colspan="3">Configured Settings</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="fw-bold">
+      <td >@ViewBag.DriverName</td>
+      <td>@ViewBag.LoopName</td>
+      <td>@ViewBag.BusNumber</td>
+    </tr>
+  </tbody>
+</table>
