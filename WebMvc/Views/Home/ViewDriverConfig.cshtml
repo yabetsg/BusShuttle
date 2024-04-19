@@ -1,0 +1,23 @@
+@model WebMvc.Models.EntryCreateModel
+
+
+<form asp-action="CreateEntry">
+    <div class="form-group">
+        <label asp-for="BusNumber">What is your bus number?</label>
+        <select class="form-control" asp-for="BusNumber" name="BusNumber" asp-items="@(ViewBag.BusNumber as SelectList)">
+            <option value=""></option>
+        </select>
+
+        <label asp-for="DriverName">What is your name?</label>
+        <select class="form-control" asp-for="DriverName" name="DriverName" asp-items="@(ViewBag.FullName as SelectList)">
+            <option value=""></option>
+        </select>
+
+        <label asp-for="LoopName">What loop will you be on?</label>
+        <select class="form-control" asp-for="LoopName" name="LoopName" asp-items="@(ViewBag.LoopName as SelectList)">
+            <option value=""></option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

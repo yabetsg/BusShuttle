@@ -1,4 +1,4 @@
-@model IEnumerable<WebMvc.Models.LoopViewModel>
+@model IEnumerable<WebMvc.Models.BusViewModel>
 @{
     ViewData["Title"] = "Entries";
 }
@@ -9,7 +9,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.BusNumber)
             </th>
             <th>
                 
@@ -22,10 +22,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.BusNumber)
                 </td>
                 <td>
-                    <a asp-action="EditLoop" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="EditBus" asp-route-id="@item.Id">Edit</a>
                 </td>
             </tr>
         }
@@ -33,5 +33,5 @@
 </table>
 
 <div class="container d-flex justify-content-center">
-<a class="btn text-decoration-none btn-danger" asp-action="CreateLoop">Create Loop</a>
+<a class="btn text-decoration-none btn-danger" asp-action="CreateBus">Create Bus</a>
 </div>

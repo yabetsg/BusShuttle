@@ -2,14 +2,11 @@
 @{
     ViewData["Title"] = "Entries";
 }
-
+<h3>Existing Drivers</h3>
 <table class="table">
-    <a asp-action="ViewManager">Back</a>
+    @* <a asp-action="ViewManager">Back</a> *@
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
@@ -27,9 +24,6 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
                  <td>
@@ -42,5 +36,7 @@
         }
     </tbody>
 </table>
+<div class="container d-flex justify-content-center">
+<a class="btn text-decoration-none btn-danger" asp-action="CreateDriver">New Driver</a>
+</div>
 
-<a asp-action="CreateDriver">Create Driver</a>

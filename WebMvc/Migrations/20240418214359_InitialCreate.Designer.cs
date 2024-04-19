@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebMvc.Migrations
 {
     [DbContext(typeof(BusContext))]
-    [Migration("20240417182645_InitialCreate")]
+    [Migration("20240418214359_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -17,6 +17,20 @@ namespace WebMvc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
+
+            modelBuilder.Entity("WebMvc.Models.BusModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BusNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Buses");
+                });
 
             modelBuilder.Entity("WebMvc.Models.DriverModel", b =>
                 {
@@ -82,6 +96,21 @@ namespace WebMvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Loops");
+                });
+
+            modelBuilder.Entity("WebMvc.Models.StopModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StopName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stops");
                 });
 #pragma warning restore 612, 618
         }

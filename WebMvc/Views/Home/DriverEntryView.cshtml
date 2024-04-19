@@ -1,0 +1,29 @@
+@model WebMvc.Models.EntryCreateModel
+
+
+<form asp-action="CreateDriverEntry">
+    <div class="form-group">
+        <div class="d-flex ">
+            <input asp-for="DriverName" class="form-control" value="@ViewBag.DriverName" readonly />
+            <input asp-for="LoopName" class="form-control" value="@ViewBag.LoopName" readonly />
+            <input asp-for="BusNumber" class="form-control" value="@ViewBag.BusNumber" readonly />
+        </div>
+
+        <label asp-for="StopName" class="control-label">Stop Name:</label>
+        <select class="form-control" asp-for="StopName" asp-items="@(ViewBag.StopName as SelectList)">
+            <option value=""></option>
+        </select>
+
+
+
+        <label asp-for="Boarded" class="control-label">Boarded:</label>
+        <input asp-for="Boarded" class="form-control" />
+        <span asp-validation-for="Boarded" class="text-danger"></span>
+
+        <label asp-for="LeftBehind" class="control-label">Left Behind:</label>
+        <input asp-for="LeftBehind" class="form-control" />
+        <span asp-validation-for="LeftBehind" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Entry</button>
+</form>

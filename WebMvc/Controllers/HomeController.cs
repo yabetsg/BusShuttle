@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebMvc.Models;
 using DomainModel;
 using WebMvc.Service;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebMvc.Controllers;
 
@@ -13,13 +14,17 @@ public class HomeController : Controller
     public IEntryService entryService;
     public ILoopService loopService;
     public IDriverService driverService;
+    public IBusService busService;
+    public IStopService stopService;
 
-    public HomeController(ILogger<HomeController> logger, IEntryService entryService, ILoopService loopService, IDriverService driverService)
+    public HomeController(ILogger<HomeController> logger, IEntryService entryService, ILoopService loopService, IDriverService driverService, IBusService busService, IStopService stopService)
     {
         _logger = logger;
         this.entryService = entryService;
         this.loopService = loopService;
         this.driverService = driverService;
+        this.busService = busService;
+        this.stopService = stopService;
     }
 
     public IActionResult Index()
@@ -32,19 +37,78 @@ public class HomeController : Controller
     }
     public IActionResult ViewLoop()
     {
-        return View(loopService.GetAllLoops().Select(e=>LoopViewModel.FromLoop(e)));
+        return View(loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e)));
     }
 
-     public IActionResult ViewDriver()
+    public IActionResult ViewDriver()
     {
-        return View(driverService.GetAllDrivers().Select(e=>DriverViewModel.FromDriver(e)));
+        return View(driverService.GetAllDrivers().Select(e => DriverViewModel.FromDriver(e)));
     }
 
 
+    public IActionResult ViewBus()
+    {
+        return View(busService.GetAllBuses().Select(e => BusViewModel.FromBus(e)));
+    }
+
+    public IActionResult ViewStop()
+    {
+        return View(stopService.GetAllStops().Select(e => StopViewModel.FromStop(e)));
+    }
     public IActionResult ViewManager()
     {
         return View("ViewManager");
     }
+    public IActionResult ViewDriverConfig()
+    {
+        var buses = busService.GetAllBuses().Select(e => BusViewModel.FromBus(e));
+        var drivers = driverService.GetAllDrivers().Select(e => DriverViewModel.FromDriver(e));
+        var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
+        var entries = entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e));
+        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+        ViewBag.BusNumber = new SelectList(buses, "BusNumber", "BusNumber");
+        ViewBag.FirstName = new SelectList(drivers, "FirstName", "FirstName");
+        ViewBag.LastName = new SelectList(drivers, "LastName", "LastName");
+        ViewBag.LoopName = new SelectList(loops, "Name", "Name");
+        ViewBag.StopName = new SelectList(stops, "Name", "Name");
+        var fullNames = drivers.Select(d => new { FullName = $"{d.FirstName} {d.LastName}", Id = d.Id });
+        ViewBag.FullName = new SelectList(fullNames, "FullName", "FullName");
+        return View();
+    }
+
+
+
+    public IActionResult DriverEntryView()
+    {
+        var BusNumber = (int)TempData["BusNumber"];
+
+        var DriverName = (string)TempData["DriverName"];
+        var LoopName = (string)TempData["LoopName"];
+
+        var StopName = (string)TempData["StopName"];
+
+        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+        ViewBag.BusNumber = BusNumber;
+        ViewBag.DriverName = DriverName;
+        ViewBag.LoopName = LoopName;
+        ViewBag.StopName = new SelectList(stops, "Name", "Name");
+
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CreateDriverEntry(EntryCreateModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            entryService.CreateEntry(model.BusNumber, model.DriverName, model.LoopName, model.StopName, model.Boarded, model.LeftBehind);
+        }
+
+        return View("ViewDriverConfig");
+    }
+
+
     // GET: /Home/EditEntry/{id}
     public IActionResult EditEntry([FromRoute] int id)
     {
@@ -52,7 +116,7 @@ public class HomeController : Controller
         var entryEditModel = EntryEditModel.FromEntry(entry);
         return View(entryEditModel);
     }
-      public IActionResult EditDriver([FromRoute] int id)
+    public IActionResult EditDriver([FromRoute] int id)
     {
         var driver = driverService.FindDriverByID(id);
         var driverEditModel = DriverEditModel.FromDriver(driver);
@@ -61,9 +125,22 @@ public class HomeController : Controller
 
     public IActionResult EditLoop([FromRoute] int id)
     {
-        var driver = driverService.FindDriverByID(id);
-        var driverEditModel = DriverEditModel.FromDriver(driver);
-        return View(driverEditModel);
+        var loop = loopService.FindLoopByID(id);
+        var loopEditModel = LoopEditModel.FromLoop(loop);
+        return View(loopEditModel);
+    }
+    public IActionResult EditBus([FromRoute] int id)
+    {
+        var bus = busService.FindBusByID(id);
+        var busEditModel = BusEditModel.FromBus(bus);
+        return View(busEditModel);
+    }
+
+    public IActionResult EditStop([FromRoute] int id)
+    {
+        var stop = stopService.FindStopByID(id);
+        var stopEditModel = StopEditModel.FromStop(stop);
+        return View(stopEditModel);
     }
     // POST: Home/EditEntry/5
     [HttpPost]
@@ -81,7 +158,7 @@ public class HomeController : Controller
         }
     }
 
-      [HttpPost]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditDriver(int id, [Bind("FirstName,LastName")] DriverEditModel driver)
     {
@@ -96,7 +173,7 @@ public class HomeController : Controller
         }
     }
 
-     [HttpPost]
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditLoop(int id, [Bind("Name")] LoopEditModel loop)
     {
@@ -111,22 +188,72 @@ public class HomeController : Controller
         }
     }
 
-
-    public IActionResult CreateEntry()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditBus(int id, [Bind("BusNumber")] BusEditModel bus)
     {
-        return View(new EntryCreateModel());
+        if (ModelState.IsValid)
+        {
+            busService.UpdateBusByID(id, bus.BusNumber);
+            return RedirectToAction("ViewBus", new { id = id });
+        }
+        else
+        {
+            return View(bus);
+        }
     }
 
-     public IActionResult CreateDriver()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditStop(int id, [Bind("Name")] StopEditModel stop)
+    {
+        if (ModelState.IsValid)
+        {
+            stopService.UpdateStopByID(id, stop.Name);
+            return RedirectToAction("ViewStop", new { id = id });
+        }
+        else
+        {
+            return View(stop);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateEntry(int busNumber, string driverName, string loopName)
+    {
+        if (ModelState.IsValid)
+        {
+            TempData["BusNumber"] = busNumber;
+            TempData["DriverName"] = driverName;
+            TempData["LoopName"] = loopName;
+            return RedirectToAction("DriverEntryView");
+        }
+        return View();
+    }
+
+
+
+    public IActionResult CreateDriver()
     {
         return View(new DriverCreateModel());
     }
+
 
     public IActionResult CreateLoop()
     {
         return View(new LoopCreateModel());
     }
-    // POST: /Home/CreateEntry
+    public IActionResult CreateBus()
+    {
+        return View(new BusCreateModel());
+    }
+
+
+    public IActionResult CreateStop()
+    {
+        return View(new StopCreateModel());
+    }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateLoop([Bind("Name")] LoopCreateModel loop)
@@ -143,19 +270,49 @@ public class HomeController : Controller
         }
     }
 
-     [HttpPost]
+    [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateDriver([Bind("FirstName","LastName")] DriverCreateModel driver)
+    public async Task<IActionResult> CreateDriver([Bind("FirstName", "LastName")] DriverCreateModel driver)
     {
         if (ModelState.IsValid)
         {
-            driverService.CreateDriver(driver.FirstName,driver.LastName);
+            driverService.CreateDriver(driver.FirstName, driver.LastName);
             return RedirectToAction("ViewDriver");
         }
         else
         {
 
             return View(driver);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateBus([Bind("BusNumber")] BusCreateModel bus)
+    {
+        if (ModelState.IsValid)
+        {
+            busService.CreateBus(bus.BusNumber);
+            return RedirectToAction("ViewBus");
+        }
+        else
+        {
+            return View(bus);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateStop([Bind("Name")] StopCreateModel stop)
+    {
+        if (ModelState.IsValid)
+        {
+            stopService.CreateStop(stop.Name);
+            return RedirectToAction("ViewStop");
+        }
+        else
+        {
+            return View(stop);
         }
     }
 

@@ -6,6 +6,7 @@ namespace DomainModel
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
+        public string FullName => $"{FirstName} {LastName}";
         public Driver(int id, string firstName,string lastName)
         {
             Id = id;

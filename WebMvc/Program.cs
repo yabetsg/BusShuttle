@@ -16,6 +16,8 @@ public class Program
         builder.Services.AddScoped<IEntryService,EntryService>();
         builder.Services.AddScoped<ILoopService,LoopService>();
         builder.Services.AddScoped<IDriverService,DriverService>();
+        builder.Services.AddScoped<IBusService,BusService>();
+        builder.Services.AddScoped<IStopService,StopService>();
         var app = builder.Build();
 
 

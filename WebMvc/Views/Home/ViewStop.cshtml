@@ -1,11 +1,12 @@
-@model IEnumerable<WebMvc.Models.LoopViewModel>
+@model IEnumerable<WebMvc.Models.StopViewModel>
 @{
     ViewData["Title"] = "Entries";
 }
+<div>
 
+</div>
 
 <table class="table">
-
     <thead>
         <tr>
             <th>
@@ -25,13 +26,14 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    <a asp-action="EditLoop" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="EditStop" asp-route-id="@item.Id">Edit</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
 <div class="container d-flex justify-content-center">
-<a class="btn text-decoration-none btn-danger" asp-action="CreateLoop">Create Loop</a>
+<a class="btn text-decoration-none btn-danger" asp-action="CreateStop">Create Stop</a>
 </div>
+
+

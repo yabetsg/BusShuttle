@@ -11,6 +11,19 @@ namespace WebMvc.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Buses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BusNumber = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Buses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Drivers",
                 columns: table => new
                 {
@@ -54,11 +67,27 @@ namespace WebMvc.Migrations
                 {
                     table.PrimaryKey("PK_Loops", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Stops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StopName = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stops", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Buses");
+
             migrationBuilder.DropTable(
                 name: "Drivers");
 
@@ -67,6 +96,9 @@ namespace WebMvc.Migrations
 
             migrationBuilder.DropTable(
                 name: "Loops");
+
+            migrationBuilder.DropTable(
+                name: "Stops");
         }
     }
 }

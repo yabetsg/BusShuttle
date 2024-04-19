@@ -15,6 +15,20 @@ namespace WebMvc.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
+            modelBuilder.Entity("WebMvc.Models.BusModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BusNumber")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Buses");
+                });
+
             modelBuilder.Entity("WebMvc.Models.DriverModel", b =>
                 {
                     b.Property<int>("Id")
@@ -79,6 +93,21 @@ namespace WebMvc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Loops");
+                });
+
+            modelBuilder.Entity("WebMvc.Models.StopModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StopName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stops");
                 });
 #pragma warning restore 612, 618
         }
