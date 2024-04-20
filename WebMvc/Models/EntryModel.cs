@@ -13,6 +13,6 @@ namespace WebMvc.Models
         public string StopName { get; set; }
         public int Boarded { get; set;}
         public int LeftBehind{get; set; }
-
+        public DateTime TimeStamp { get; set; }
     }
 }

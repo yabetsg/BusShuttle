@@ -19,8 +19,12 @@ namespace WebMvc.Models
 
         [Display(Name = "Boarded")]
         public int Boarded { get; set;}
+
+        [Display(Name = "Left Behind")]
         public int LeftBehind{get; set; }
 
+        [Display(Name = "Time")]
+        public DateTime TimeStamp { get; set; }
 
        public static EntryEditModel FromEntry(Entry entry)
         {
@@ -33,6 +37,7 @@ namespace WebMvc.Models
                 Boarded = entry.Boarded,
                 StopName = entry.StopName,
                 LeftBehind = entry.LeftBehind,
+                TimeStamp = entry.TimeStamp,
             };
         }
     }

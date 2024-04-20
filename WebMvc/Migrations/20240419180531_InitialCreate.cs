@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -48,7 +49,8 @@ namespace WebMvc.Migrations
                     LoopName = table.Column<string>(type: "TEXT", nullable: false),
                     StopName = table.Column<string>(type: "TEXT", nullable: false),
                     Boarded = table.Column<int>(type: "INTEGER", nullable: false),
-                    LeftBehind = table.Column<int>(type: "INTEGER", nullable: false)
+                    LeftBehind = table.Column<int>(type: "INTEGER", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

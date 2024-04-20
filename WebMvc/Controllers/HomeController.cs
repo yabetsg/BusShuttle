@@ -4,6 +4,7 @@ using WebMvc.Models;
 using DomainModel;
 using WebMvc.Service;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net.Http.Json;
 
 namespace WebMvc.Controllers;
 
@@ -65,12 +66,12 @@ public class HomeController : Controller
         var drivers = driverService.GetAllDrivers().Select(e => DriverViewModel.FromDriver(e));
         var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
         var entries = entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e));
-        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+        // var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
         ViewBag.BusNumber = new SelectList(buses, "BusNumber", "BusNumber");
         ViewBag.FirstName = new SelectList(drivers, "FirstName", "FirstName");
         ViewBag.LastName = new SelectList(drivers, "LastName", "LastName");
         ViewBag.LoopName = new SelectList(loops, "Name", "Name");
-        ViewBag.StopName = new SelectList(stops, "Name", "Name");
+        // ViewBag.StopName = new SelectList(stops, "Name", "Name");
         var fullNames = drivers.Select(d => new { FullName = $"{d.FirstName} {d.LastName}", Id = d.Id });
         ViewBag.FullName = new SelectList(fullNames, "FullName", "FullName");
         return View();
@@ -80,17 +81,58 @@ public class HomeController : Controller
 
     public IActionResult DriverEntryView()
     {
+        IEnumerable<StopViewModel> stops;
+        var currentStop = TempData["CurrentStop"] as string;
+
+        _logger.LogInformation("-------------------------------");
+        _logger.LogInformation(currentStop);
+        if (currentStop != null)
+        {
+            stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e)).Where(stop => stop.Id != int.Parse(currentStop.ToString()));
+        }
+        else
+        {
+            stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+        }
+        var stop = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+
+        if (currentStop != null)
+        {
+            // _logger.LogInformation("----------------------------------");
+
+            // _logger.LogInformation(currentStop);
+            int id = int.Parse(currentStop);
+            int stopCount = stopService.GetAllStops().Count();
+            Console.Write("COUNT"+stopCount);
+            Stop nextStop;
+            if (stopCount == id)
+            {
+                nextStop = stopService.FindStopByID(id - 1);
+            }
+            else
+            {
+                nextStop = stopService.FindStopByID(id + 1);
+            }
+            if (nextStop != null)
+            {
+
+                ViewBag.NextStop = nextStop.Name;
+            }
+
+        }
+
 
         var BusNumber = HttpContext.Session.GetInt32("BusNumber");
         var DriverName = HttpContext.Session.GetString("DriverName");
         var LoopName = HttpContext.Session.GetString("LoopName");
+        var Stops = HttpContext.Session.GetString("Stops");
 
-        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
         ViewBag.BusNumber = BusNumber;
         ViewBag.DriverName = DriverName;
         ViewBag.LoopName = LoopName;
 
-        ViewBag.StopName = new SelectList(stops, "Name", "Name");
+        ViewBag.Id = new SelectList(stop, "Id", "Name");
+        ViewBag.StopName = new SelectList(stop, "Id", "Name");
 
         return View();
     }
@@ -99,26 +141,44 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult CreateDriverEntry(EntryCreateModel model)
     {
-        if (ModelState.IsValid)
-        {
-            entryService.CreateEntry(model.BusNumber, model.DriverName, model.LoopName, model.StopName, model.Boarded, model.LeftBehind);
-            return new EmptyResult();
-
-        }
-
-         var BusNumber = HttpContext.Session.GetInt32("BusNumber");
+        var BusNumber = HttpContext.Session.GetInt32("BusNumber");
         var DriverName = HttpContext.Session.GetString("DriverName");
         var LoopName = HttpContext.Session.GetString("LoopName");
 
-        var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
-        ViewBag.BusNumber = BusNumber;
-        ViewBag.DriverName = DriverName;
-        ViewBag.LoopName = LoopName;
+        _logger.LogInformation("ID: "+ Convert.ToString(model.StopName));
+        _logger.LogInformation("Boarded: "+ Convert.ToString(model.Boarded));
+        _logger.LogInformation("Left Behind: "+ Convert.ToString(model.LeftBehind));
+        if (model.StopName != null)
+        {
+            ViewBag.DriverName = DriverName;
+            ViewBag.LoopName = LoopName;
+            ViewBag.BusNumber = (int)BusNumber;
 
-        ViewBag.StopName = new SelectList(stops, "Name", "Name");
-        
-        return View("DriverEntryView",model);
+            int stopId = int.Parse(model.StopName);
+            Stop stopName = stopService.FindStopByID(stopId);
+            
+            entryService.CreateEntry((int)BusNumber, DriverName, LoopName, stopName.Name, model.Boarded, model.LeftBehind, DateTime.Now);
+            TempData["SuccessMessage"] = "Your entry has been submited!";
+            TempData["CurrentStop"] = model.StopName;
+
+            return RedirectToAction("DriverEntryView");
+
+        }
+        else
+        {
+            _logger.LogInformation("------ERRRRRRR------------------------------------");
+
+            var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
+            ViewBag.DriverName = DriverName;
+            ViewBag.LoopName = LoopName;
+            ViewBag.BusNumber = (int)BusNumber;
+            ViewBag.StopName = new SelectList(stops, "Name", "Name");
+
+            return View("DriverEntryView", model);
+        }
+
     }
+
 
 
     // GET: /Home/EditEntry/{id}
@@ -161,7 +221,7 @@ public class HomeController : Controller
     {
         if (ModelState.IsValid)
         {
-            entryService.UpdateEntryByID(id, entry.BusNumber, entry.DriverName, entry.LoopName, entry.StopName, entry.Boarded, entry.LeftBehind);
+            entryService.UpdateEntryByID(id, entry.BusNumber, entry.DriverName, entry.LoopName, entry.StopName, entry.Boarded, entry.LeftBehind, DateTime.Now);
             return RedirectToAction("ViewEntry", new { id = id });
         }
         else

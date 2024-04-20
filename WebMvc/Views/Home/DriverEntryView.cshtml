@@ -3,62 +3,74 @@
 
 
 
-<form asp-action="CreateDriverEntry" class="text-center fs-1" id="submissionForm">
-    <div class="form-group">
-        <div class="d-flex ">
-        </div>
-
-        <label asp-for="StopName" class="control-label">Stop</label>
-        <select class="form-control fs-4 form-select" asp-for="StopName" asp-items="@(ViewBag.StopName as SelectList)">
-            <option value=""></option>
-        </select>
+<form asp-action="CreateDriverEntry" route class="text-center fs-1" id="submissionForm">
+  <div class="form-group">
 
 
+    <div>
+      <label asp-for="StopName" class="control-label">Stop</label>
 
-        <label asp-for="Boarded" class="control-label">Boarded</label>
-        <input asp-for="Boarded" class="form-control fs-4" />
-        <span asp-validation-for="Boarded" class="text-danger"></span>
+      <select class="form-control fs-4 form-select text-center" asp-for="StopName">
+        <option value=""></option>
+        @foreach (var item in ViewBag.StopName)
+        {
+          <!option value="@item.Value" @(item.Text == ViewBag.NextStop ? "selected" : "")>@item.Text</!option>
+        }
 
-        <label asp-for="LeftBehind" class="control-label">Left Behind</label>
-        <input asp-for="LeftBehind" class="form-control fs-4" />
-        <span asp-validation-for="LeftBehind" class="text-danger"></span>
+      </select>
+
+      <span asp-validation-for="StopName" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-success fs-1 m-2">Submit Entry</button>
+
+    <div>
+      <label asp-for="Boarded" class="control-label">Boarded</label>
+      <input asp-for="Boarded" class="form-control fs-4 text-center" value="0" />
+    </div>
+
+    <div>
+      <label asp-for="LeftBehind" class="control-label">Left Behind</label>
+      <input asp-for="LeftBehind" class="form-control fs-4 text-center" value="0" />
+    </div>
+
+
+  </div>
+
+  <button type="submit" class="btn btn-success fs-1 m-2">Submit Entry</button>
 </form>
 
-  <div id="submittedMessage" class="alert alert-success" style="display: none;">
-        Your entry has been added
-        <button type="button" class="close" onclick="dismissMessage()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+@if (TempData["SuccessMessage"] != null)
+{
+  <div id="submittedMessage" class="alert alert-success" style="display: flex; justify-content: space-between;">
+  @TempData["SuccessMessage"]
+  <button type="button" class="close" onclick="dismissMessage()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+}
 
-    <script>
-        document.getElementById('submissionForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            displayMessage();
-        });
 
-        function dismissMessage() {
-            document.getElementById('submittedMessage').style.display = 'none';
-        }
+<script>
 
-        function displayMessage() {
-            document.getElementById('submittedMessage').style.display = 'flex';
-            document.getElementById('submittedMessage').style.justifyContent = 'space-between';
-        }
-    </script>
+  function dismissMessage() {
+    document.getElementById('submittedMessage').style.display = 'none';
+  }
+
+  function displayMessage() {
+    document.getElementById('submittedMessage').style.display = 'flex';
+    document.getElementById('submittedMessage').style.justifyContent = 'space-between';
+  }
+</script>
 <br>
 <table class="table table-striped fs-6">
-  <thead >
+  <thead>
     <tr class="text-center">
       <th class="fw-normal" colspan="3">Configured Settings</th>
     </tr>
   </thead>
   <tbody>
     <tr class="fw-bold">
-      <td >@ViewBag.DriverName</td>
+      <td>@ViewBag.DriverName</td>
       <td>@ViewBag.LoopName</td>
       <td>@ViewBag.BusNumber</td>
     </tr>

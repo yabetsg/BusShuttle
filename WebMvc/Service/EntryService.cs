@@ -17,15 +17,15 @@ namespace WebMvc.Service
         public List<Entry> GetAllEntries()
         {
             var entries = busDb.Entries
-                .Select(e => new Entry(e.Id, e.BusNumber, e.DriverName, e.LoopName, e.StopName, e.Boarded,e.LeftBehind))
+                .Select(e => new Entry(e.Id, e.BusNumber, e.DriverName, e.LoopName, e.StopName, e.Boarded,e.LeftBehind,e.TimeStamp))
                 .ToList();
             return entries;
         }
 
-        public void CreateEntry(int busNumber, string driverName, string loopName, string stopName, int boarded,int leftBehind)
+        public void CreateEntry(int busNumber, string driverName, string loopName, string stopName, int boarded,int leftBehind,DateTime timeStamp)
         {
             var entries = GetAllEntries();
-            busDb.Add(new EntryModel { Id = entries.Count + 1, BusNumber = busNumber, DriverName = driverName, LoopName = loopName, StopName = stopName, Boarded = boarded , LeftBehind = leftBehind });
+            busDb.Add(new EntryModel { Id = entries.Count + 1, BusNumber = busNumber, DriverName = driverName, LoopName = loopName, StopName = stopName, Boarded = boarded , LeftBehind = leftBehind, TimeStamp=timeStamp});
             busDb.SaveChanges();
         }
 
@@ -35,7 +35,7 @@ namespace WebMvc.Service
             return allEntries.Find(entry => entry.Id == id);
         }
 
-        public void UpdateEntryByID(int id, int busNumber,string driverName,string loopName, string stopName,int boarded,int leftBehind)
+        public void UpdateEntryByID(int id, int busNumber,string driverName,string loopName, string stopName,int boarded,int leftBehind,DateTime timeStamp)
         {
             var entries = GetAllEntries();
             var entry = busDb.Entries.FirstOrDefault(e => e.Id == id);
@@ -48,6 +48,7 @@ namespace WebMvc.Service
                 entry.StopName = stopName;
                 entry.Boarded = boarded;
                 entry.LeftBehind = leftBehind;
+                entry.TimeStamp = timeStamp;
                 busDb.SaveChanges();
             }
         }

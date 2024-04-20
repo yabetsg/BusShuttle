@@ -9,7 +9,9 @@ namespace DomainModel
         public string StopName { get; set; }
         public int Boarded { get; set; }
         public int LeftBehind{get; set; }
-        public Entry(int id, int busNumber, string driverName, string loopName, string stopName, int boarded,int leftBehind)
+
+        public DateTime TimeStamp{get; set; }
+        public Entry(int id, int busNumber, string driverName, string loopName, string stopName, int boarded,int leftBehind,DateTime timeStamp)
         {
             Id = id;
             BusNumber = busNumber;
@@ -18,11 +20,15 @@ namespace DomainModel
             StopName = stopName;
             Boarded = boarded;
             LeftBehind = leftBehind;
+            TimeStamp = timeStamp;
         }
 
-        public void Update(int boarded)
+        public void Update(int id, int boarded,int leftBehind,DateTime timeStamp)
         {
+            Id = id;
             Boarded = boarded;
+            LeftBehind = leftBehind;
+            TimeStamp = timeStamp;
         }
     }
 }
