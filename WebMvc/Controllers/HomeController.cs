@@ -5,9 +5,11 @@ using DomainModel;
 using WebMvc.Service;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebMvc.Controllers;
-
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -17,8 +19,10 @@ public class HomeController : Controller
     public IDriverService driverService;
     public IBusService busService;
     public IStopService stopService;
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public HomeController(ILogger<HomeController> logger, IEntryService entryService, ILoopService loopService, IDriverService driverService, IBusService busService, IStopService stopService)
+    public HomeController(ILogger<HomeController> logger, IEntryService entryService, ILoopService loopService, IDriverService driverService, IBusService busService, IStopService stopService, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
     {
         _logger = logger;
         this.entryService = entryService;
@@ -26,12 +30,102 @@ public class HomeController : Controller
         this.driverService = driverService;
         this.busService = busService;
         this.stopService = stopService;
+        _signInManager = signInManager;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
     {
-        return View();
+        if (!_signInManager.IsSignedIn(User))
+        {
+            return RedirectToAction("DriverRegister");
+        }
+        else
+        {
+            return View();
+        }
     }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult DriverRegister()
+    {
+        return View("DriverRegister");
+    }
+    [AllowAnonymous]
+    public IActionResult DriverLogin()
+    {
+        return View("DriverLogin");
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DriverRegister(RegisterCreateModel model)
+    {
+        _logger.LogInformation("--------BAD MODAL-------------");
+
+        if (ModelState.IsValid)
+        {
+            // Process the registration
+            var user = new IdentityUser { UserName = model.UserName };
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                // Registration successful, redirect to login page
+                return RedirectToAction("ViewDriverLogin");
+            }
+            else
+            {
+                _logger.LogInformation("--------ERROR SIGNING UP-------------");
+                // Registration failed, add errors to ModelState
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View("DriverRegister", model);
+
+            }
+        }
+        else
+        {
+            return View("DriverRegister", model);
+        }
+
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DriverLogin(RegisterViewModel model)
+    {
+        _logger.LogInformation("--------BAD MODeL-------------");
+
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                await _signInManager.SignInAsync(user, isPersistent: true);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return View(model);
+            }
+        }
+        return View(model);
+    }
+
+    [AllowAnonymous]
+    public async Task<IActionResult> DriverLogout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Index");
+    }
+
     public IActionResult ViewEntry()
     {
         return View(entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e)));
@@ -103,7 +197,7 @@ public class HomeController : Controller
             // _logger.LogInformation(currentStop);
             int id = int.Parse(currentStop);
             int stopCount = stopService.GetAllStops().Count();
-            Console.Write("COUNT"+stopCount);
+            Console.Write("COUNT" + stopCount);
             Stop nextStop;
             if (stopCount == id)
             {
@@ -145,18 +239,20 @@ public class HomeController : Controller
         var DriverName = HttpContext.Session.GetString("DriverName");
         var LoopName = HttpContext.Session.GetString("LoopName");
 
-        _logger.LogInformation("ID: "+ Convert.ToString(model.StopName));
-        _logger.LogInformation("Boarded: "+ Convert.ToString(model.Boarded));
-        _logger.LogInformation("Left Behind: "+ Convert.ToString(model.LeftBehind));
+        _logger.LogInformation("ID: " + Convert.ToString(model.StopName));
+        _logger.LogInformation("Boarded: " + Convert.ToString(model.Boarded));
+        _logger.LogInformation("Left Behind: " + Convert.ToString(model.LeftBehind));
         if (model.StopName != null)
         {
+            _logger.LogInformation("------SUCCC------------------------------------");
+
             ViewBag.DriverName = DriverName;
             ViewBag.LoopName = LoopName;
             ViewBag.BusNumber = (int)BusNumber;
 
             int stopId = int.Parse(model.StopName);
             Stop stopName = stopService.FindStopByID(stopId);
-            
+
             entryService.CreateEntry((int)BusNumber, DriverName, LoopName, stopName.Name, model.Boarded, model.LeftBehind, DateTime.Now);
             TempData["SuccessMessage"] = "Your entry has been submited!";
             TempData["CurrentStop"] = model.StopName;
@@ -172,7 +268,7 @@ public class HomeController : Controller
             ViewBag.DriverName = DriverName;
             ViewBag.LoopName = LoopName;
             ViewBag.BusNumber = (int)BusNumber;
-            ViewBag.StopName = new SelectList(stops, "Name", "Name");
+            ViewBag.StopName = new SelectList(stops, "Id", "Name");
 
             return View("DriverEntryView", model);
         }

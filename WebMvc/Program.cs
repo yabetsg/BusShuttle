@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebMvc.Service;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WebIdentity.Data;
 
 namespace WebMvc;
 
@@ -8,16 +12,28 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+     
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(connectionString));
+        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
         builder.Services.AddSession();
         builder.Services.AddDbContext<BusContext>(Options => Options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddControllersWithViews();
-        builder.Services.AddScoped<IEntryService,EntryService>();
-        builder.Services.AddScoped<ILoopService,LoopService>();
-        builder.Services.AddScoped<IDriverService,DriverService>();
-        builder.Services.AddScoped<IBusService,BusService>();
-        builder.Services.AddScoped<IStopService,StopService>();
+        builder.Services.AddScoped<IEntryService, EntryService>();
+        builder.Services.AddScoped<ILoopService, LoopService>();
+        builder.Services.AddScoped<IDriverService, DriverService>();
+        builder.Services.AddScoped<IBusService, BusService>();
+        builder.Services.AddScoped<IStopService, StopService>();
+           builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Home/DriverLogin";
+            });
+          
         var app = builder.Build();
 
 
@@ -33,7 +49,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
+       
         app.UseAuthorization();
 
         app.MapControllerRoute(

@@ -13,7 +13,6 @@ public class BusContext : DbContext
     public DbSet<BusModel> Buses { get; set; }
     public DbSet<StopModel> Stops { get; set; }
 
-
     
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
