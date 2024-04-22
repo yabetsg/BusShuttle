@@ -1,6 +1,6 @@
 @model WebMvc.Models.RegisterCreateModel
 
-<form asp-action="DriverRegister" class="form  d-flex flex-column fs-2 gap-2">
+<form asp-action="Register" class="form  d-flex flex-column fs-2 gap-2">
     <div class="d-flex flex-column ">
         <input asp-for="UserName" placeholder="Username" class="text-center form-control fs-2" />
         <span asp-validation-for="UserName"></span>
@@ -15,7 +15,7 @@
         <span asp-validation-for="ConfirmPassword"></span>
     </div>
     <button type="submit" class="btn btn-outline-success fs-2 form-control">Signup</button>
-    <div class="fs-4 text-center">Already have an account? <a asp-action="DriverLogin" class="text-decoration-none">Sign in</a></div>
+    <div class="fs-4 text-center">Already have an account? <a asp-action="Login" class="text-decoration-none">Sign in</a></div>
 </form>
 @if (!ViewData.ModelState.IsValid)
 {

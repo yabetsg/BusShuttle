@@ -2,9 +2,9 @@
 @{
     ViewData["Title"] = "Create Driver";
 }
-<h2>Create Driver</h2>
 <a asp-action="ViewDriver">Back</a>
-<div class="row">
+<div class="row d-flex flex-column align-items-center text-center gap-4">
+    <h2>Create Driver</h2>
     <div class="col-md-4">
         <form asp-action="CreateDriver">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -15,14 +15,14 @@
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
 
-             <div class="form-group">
+            <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-danger" />
             </div>
         </form>
     </div>

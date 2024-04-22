@@ -2,9 +2,11 @@
 @{
     ViewData["Title"] = "Entries";
 }
+<div class="py-2">
+<a class="btn text-decoration-none btn-danger" asp-action="CreateDriver">New Driver</a>
+</div>
 <h3>Existing Drivers</h3>
-<table class="table">
-    @* <a asp-action="ViewManager">Back</a> *@
+<table class="table table-striped table-bordered fs-5 fw-bold">
     <thead>
         <tr>
             <th>
@@ -36,7 +38,5 @@
         }
     </tbody>
 </table>
-<div class="container d-flex justify-content-center">
-<a class="btn text-decoration-none btn-danger" asp-action="CreateDriver">New Driver</a>
-</div>
+
 

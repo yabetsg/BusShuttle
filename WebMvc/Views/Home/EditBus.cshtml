@@ -2,11 +2,11 @@
 @{
     ViewData["Title"] = "Edit Driver";
 }
-<h2>Edit Loop</h2>
 <a asp-action="ViewBus">Back</a>
-<div class="row">
+<div class="row d-flex flex-column align-items-center text-center gap-4">
+<h2>Edit Bus</h2>
     <div class="col-md-4">
-        <form asp-action="EditBus">
+        <form asp-action="EditBus" class="form fs-4 fw-bold border d-flex flex-column gap-4 p-2 rounded">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
 
@@ -18,7 +18,7 @@
 
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-danger" />
             </div>
         </form>
     </div>

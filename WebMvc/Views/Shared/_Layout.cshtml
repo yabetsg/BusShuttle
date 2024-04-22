@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebMvc.styles.css" asp-append-version="true" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -23,8 +20,8 @@
                     asp-action="Index">Bus Shuttle</a>
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a class="navbar-brand fw-bolder fs-2 text-white border rounded bg-secondary text-black p-1" asp-area=""
-                        asp-controller="Home" asp-action="DriverLogout">Log out</a>
+                    <a class="navbar-brand fw-bolder fs-2 text-white border rounded  text-black p-1 btn-outline-secondary" asp-area=""
+                        asp-controller="Home" asp-action="Logout">Log out</a>
                 }
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"

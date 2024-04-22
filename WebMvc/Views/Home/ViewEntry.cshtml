@@ -2,6 +2,16 @@
 @{
     ViewData["Title"] = "Entries";
 }
+<form asp-action="FilterEntry" class="p-2">
+    <div class="d-flex gap-2">
+        <input class="form-control-sm" type="date" name="date" id="date">
+        <select class="form-control-sm" name="loopName" id="loopName" asp-items="@(ViewBag.LoopName as SelectList)">
+            <option value="">Select a loop</option>
+        </select>
+        <button class="btn btn-danger" type="submit">Search</button>
+    </div>
+</form>
+
 
 <table class="table table-striped table-bordered fs-5 fw-bold">
 
@@ -16,17 +26,17 @@
             <th>
                 @Html.DisplayNameFor(model => model.StopName)
             </th>
-  
+
             <th>
                 @Html.DisplayNameFor(model => model.LoopName)
             </th>
-             <th>
+            <th>
                 @Html.DisplayNameFor(model => model.DriverName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BusNumber)
             </th>
-           <th>
+            <th>
                 @Html.DisplayNameFor(model => model.TimeStamp)
             </th>
 
@@ -43,7 +53,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.LeftBehind)
                 </td>
-               <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.StopName)
                 </td>
                 <td>
@@ -52,10 +62,10 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.DriverName)
                 </td>
-                 <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.BusNumber)
                 </td>
-                 <td>
+                <td>
                     @Html.DisplayFor(modelItem => item.TimeStamp)
                 </td>
             </tr>

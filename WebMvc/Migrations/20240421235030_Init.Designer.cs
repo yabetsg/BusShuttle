@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebMvc.Migrations
 {
     [DbContext(typeof(BusContext))]
-    [Migration("20240420230118_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240421235030_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

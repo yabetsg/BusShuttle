@@ -11,7 +11,7 @@ using WebIdentity.Data;
 namespace WebMvc.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240420230856_Init")]
+    [Migration("20240421235052_Init")]
     partial class Init
     {
         /// <inheritdoc />

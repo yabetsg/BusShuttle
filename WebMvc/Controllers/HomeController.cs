@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebMvc.Controllers;
 [Authorize]
@@ -38,7 +39,7 @@ public class HomeController : Controller
     {
         if (!_signInManager.IsSignedIn(User))
         {
-            return RedirectToAction("DriverRegister");
+            return RedirectToAction("Register");
         }
         else
         {
@@ -48,49 +49,55 @@ public class HomeController : Controller
 
     [AllowAnonymous]
     [HttpGet]
-    public IActionResult DriverRegister()
+    public IActionResult Register()
     {
-        return View("DriverRegister");
+        return View("Register");
     }
     [AllowAnonymous]
-    public IActionResult DriverLogin()
+    public IActionResult Login()
     {
-        return View("DriverLogin");
+        return View("Login");
     }
 
     [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DriverRegister(RegisterCreateModel model)
+
+    public async Task<IActionResult> Register(RegisterCreateModel model)
     {
         _logger.LogInformation("--------BAD MODAL-------------");
 
         if (ModelState.IsValid)
         {
-            // Process the registration
             var user = new IdentityUser { UserName = model.UserName };
+            var isFirstUser = !_userManager.Users.Any();
             var result = await _userManager.CreateAsync(user, model.Password);
-
             if (result.Succeeded)
             {
-                // Registration successful, redirect to login page
-                return RedirectToAction("ViewDriverLogin");
+                if (isFirstUser)
+                {
+                    await _userManager.AddToRoleAsync(user, "manager");
+                }
+                else
+                {
+                    await _userManager.AddToRoleAsync(user, "driver");
+                }
+                return RedirectToAction("Login");
             }
             else
             {
                 _logger.LogInformation("--------ERROR SIGNING UP-------------");
-                // Registration failed, add errors to ModelState
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return View("DriverRegister", model);
+                return View("Register", model);
 
             }
         }
         else
         {
-            return View("DriverRegister", model);
+            return View("Register", model);
         }
 
     }
@@ -98,7 +105,7 @@ public class HomeController : Controller
     [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DriverLogin(RegisterViewModel model)
+    public async Task<IActionResult> Login(RegisterViewModel model)
     {
         _logger.LogInformation("--------BAD MODeL-------------");
 
@@ -120,36 +127,52 @@ public class HomeController : Controller
     }
 
     [AllowAnonymous]
-    public async Task<IActionResult> DriverLogout()
+    public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index");
     }
 
+    [AllowAnonymous]
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
+    [Authorize(Roles = "manager")]
     public IActionResult ViewEntry()
     {
+        var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
+        ViewBag.LoopName = new SelectList(loops, "Name", "Name");
         return View(entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e)));
     }
+
+    [Authorize(Roles = "manager")]
     public IActionResult ViewLoop()
     {
         return View(loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e)));
     }
 
+    [Authorize(Roles = "manager")]
     public IActionResult ViewDriver()
     {
         return View(driverService.GetAllDrivers().Select(e => DriverViewModel.FromDriver(e)));
     }
 
 
+    [Authorize(Roles = "manager")]
     public IActionResult ViewBus()
     {
         return View(busService.GetAllBuses().Select(e => BusViewModel.FromBus(e)));
     }
 
+    [Authorize(Roles = "manager")]
     public IActionResult ViewStop()
     {
         return View(stopService.GetAllStops().Select(e => StopViewModel.FromStop(e)));
     }
+
+    [Authorize(Roles = "manager")]
     public IActionResult ViewManager()
     {
         return View("ViewManager");
@@ -481,6 +504,27 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    public async Task<IActionResult> FilterEntry(DateTime date, string loopName)
+    {
+        var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
+        var entries = entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e)).Where(e => e.TimeStamp.Date == date).Where(e => e.LoopName == loopName);
+        ViewBag.LoopName = new SelectList(loops, "Name", "Name");
+        IEnumerable<EntryViewModel> result = entries;
+        if (date != null)
+        {
+            result = entries.Where(e => e.TimeStamp.Date == date);
+        }
+
+        if (loopName != null)
+        {
+            result = entries.Where(e => e.LoopName == loopName);
+        }
+
+        return View("ViewEntry", result);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateStop([Bind("Name")] StopCreateModel stop)
     {
         if (ModelState.IsValid)
@@ -493,5 +537,7 @@ public class HomeController : Controller
             return View(stop);
         }
     }
+
+
 
 }
