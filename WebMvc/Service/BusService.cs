@@ -26,7 +26,7 @@ namespace WebMvc.Service
         public void CreateBus(int busNumber)
         {
             var buses = GetAllBuses();
-            busDb.Add(new BusModel { Id = buses.Count + 1, BusNumber = busNumber});
+            busDb.Add(new BusModel { Id = buses.Count + 1, BusNumber = busNumber });
             busDb.SaveChanges();
         }
 
@@ -45,6 +45,15 @@ namespace WebMvc.Service
                 bus.Id = id;
                 bus.BusNumber = busNumber;
                 busDb.SaveChanges();
+            }
+        }
+        public void DeleteBus(int id)
+        {
+            var bus = busDb.Buses.FirstOrDefault(e => e.Id == id);
+            if (bus != null)
+            {
+                busDb.Buses.Remove(bus);
+                busDb.SaveChangesAsync();
             }
         }
 

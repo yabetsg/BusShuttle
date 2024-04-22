@@ -24,8 +24,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
-                <td>
+                <td class="col-2">
                     <a asp-action="EditLoop" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="DeleteLoop" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }

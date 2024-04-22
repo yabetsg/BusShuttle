@@ -65,7 +65,6 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Register(RegisterCreateModel model)
     {
-        _logger.LogInformation("--------BAD MODAL-------------");
 
         if (ModelState.IsValid)
         {
@@ -82,11 +81,12 @@ public class HomeController : Controller
                 {
                     await _userManager.AddToRoleAsync(user, "driver");
                 }
+                _logger.LogWarning("Created a new user: {Username}",model.UserName);
                 return RedirectToAction("Login");
             }
             else
             {
-                _logger.LogInformation("--------ERROR SIGNING UP-------------");
+                _logger.LogWarning("Error creating a new user");
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -177,6 +177,8 @@ public class HomeController : Controller
     {
         return View("ViewManager");
     }
+
+    [Authorize(Roles = "driver")]
     public IActionResult ViewDriverConfig()
     {
         var buses = busService.GetAllBuses().Select(e => BusViewModel.FromBus(e));
@@ -195,7 +197,7 @@ public class HomeController : Controller
     }
 
 
-
+    [Authorize(Roles = "driver")]
     public IActionResult DriverEntryView()
     {
         IEnumerable<StopViewModel> stops;
@@ -215,9 +217,7 @@ public class HomeController : Controller
 
         if (currentStop != null)
         {
-            // _logger.LogInformation("----------------------------------");
 
-            // _logger.LogInformation(currentStop);
             int id = int.Parse(currentStop);
             int stopCount = stopService.GetAllStops().Count();
             Console.Write("COUNT" + stopCount);
@@ -254,6 +254,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [Authorize(Roles = "driver")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult CreateDriverEntry(EntryCreateModel model)
@@ -267,7 +268,6 @@ public class HomeController : Controller
         _logger.LogInformation("Left Behind: " + Convert.ToString(model.LeftBehind));
         if (model.StopName != null)
         {
-            _logger.LogInformation("------SUCCC------------------------------------");
 
             ViewBag.DriverName = DriverName;
             ViewBag.LoopName = LoopName;
@@ -280,12 +280,14 @@ public class HomeController : Controller
             TempData["SuccessMessage"] = "Your entry has been submited!";
             TempData["CurrentStop"] = model.StopName;
 
+            _logger.LogInformation("Successfully created an entry!");
+            
             return RedirectToAction("DriverEntryView");
 
         }
         else
         {
-            _logger.LogInformation("------ERRRRRRR------------------------------------");
+            _logger.LogWarning("Error creating entry!");
 
             var stops = stopService.GetAllStops().Select(e => StopViewModel.FromStop(e));
             ViewBag.DriverName = DriverName;
@@ -301,6 +303,7 @@ public class HomeController : Controller
 
 
     // GET: /Home/EditEntry/{id}
+
     public IActionResult EditEntry([FromRoute] int id)
     {
         var entry = entryService.FindEntryByID(id);
@@ -314,12 +317,15 @@ public class HomeController : Controller
         return View(driverEditModel);
     }
 
+    [Authorize(Roles = "manager")]
     public IActionResult EditLoop([FromRoute] int id)
     {
         var loop = loopService.FindLoopByID(id);
         var loopEditModel = LoopEditModel.FromLoop(loop);
         return View(loopEditModel);
     }
+
+    [Authorize(Roles = "manager")]
     public IActionResult EditBus([FromRoute] int id)
     {
         var bus = busService.FindBusByID(id);
@@ -327,6 +333,40 @@ public class HomeController : Controller
         return View(busEditModel);
     }
 
+    [Authorize(Roles = "manager")]
+    public IActionResult DeleteBus([FromRoute] int id)
+    {
+        busService.DeleteBus(id);
+        return RedirectToAction("ViewBus");
+
+    }
+    [Authorize(Roles = "manager")]
+    public IActionResult DeleteLoop([FromRoute] int id)
+    {
+        loopService.DeleteLoop(id);
+        return RedirectToAction("ViewLoop");
+
+    }
+
+    [Authorize(Roles = "manager")]
+    public IActionResult DeleteDriver([FromRoute] int id)
+    {
+        driverService.DeleteDriver(id);
+        return RedirectToAction("ViewDriver");
+
+    }
+
+    [Authorize(Roles = "manager")]
+    public IActionResult DeleteStop([FromRoute] int id)
+    {
+        stopService.DeleteStop(id);
+        return RedirectToAction("ViewStop");
+
+    }
+
+
+
+    [Authorize(Roles = "manager")]
     public IActionResult EditStop([FromRoute] int id)
     {
         var stop = stopService.FindStopByID(id);
@@ -334,6 +374,7 @@ public class HomeController : Controller
         return View(stopEditModel);
     }
     // POST: Home/EditEntry/5
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditEntry(int id, [Bind("BusNumber,DriverName,LoopName,StopName,Boarded,LeftBehind")] EntryEditModel entry)
@@ -349,6 +390,7 @@ public class HomeController : Controller
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditDriver(int id, [Bind("FirstName,LastName")] DriverEditModel driver)
@@ -364,6 +406,7 @@ public class HomeController : Controller
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditLoop(int id, [Bind("Name")] LoopEditModel loop)
@@ -379,6 +422,7 @@ public class HomeController : Controller
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditBus(int id, [Bind("BusNumber")] BusEditModel bus)
@@ -394,6 +438,7 @@ public class HomeController : Controller
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditStop(int id, [Bind("Name")] StopEditModel stop)
@@ -408,7 +453,7 @@ public class HomeController : Controller
             return View(stop);
         }
     }
-
+    [Authorize(Roles = "driver")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateEntry(int busNumber, string driverName, string loopName)
@@ -434,27 +479,31 @@ public class HomeController : Controller
     }
 
 
-
+    [Authorize(Roles = "manager")]
     public IActionResult CreateDriver()
     {
         return View(new DriverCreateModel());
     }
 
-
+    [Authorize(Roles = "manager")]
     public IActionResult CreateLoop()
     {
         return View(new LoopCreateModel());
     }
+
+    [Authorize(Roles = "manager")]
     public IActionResult CreateBus()
     {
         return View(new BusCreateModel());
     }
 
-
+    [Authorize(Roles = "manager")]
     public IActionResult CreateStop()
     {
         return View(new StopCreateModel());
     }
+
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateLoop([Bind("Name")] LoopCreateModel loop)
@@ -462,6 +511,8 @@ public class HomeController : Controller
         if (ModelState.IsValid)
         {
             loopService.CreateLoop(loop.Name);
+
+            _logger.LogInformation("Successfully created a new loop: {Name}!",loop.Name);
             return RedirectToAction("ViewLoop");
         }
         else
@@ -471,6 +522,7 @@ public class HomeController : Controller
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateDriver([Bind("FirstName", "LastName")] DriverCreateModel driver)
@@ -478,15 +530,19 @@ public class HomeController : Controller
         if (ModelState.IsValid)
         {
             driverService.CreateDriver(driver.FirstName, driver.LastName);
+
+            _logger.LogInformation("Successfully created a new driver: {First} {Last}!",driver.FirstName,driver.LastName);
             return RedirectToAction("ViewDriver");
         }
         else
         {
 
+            _logger.LogWarning("Error creating driver!");
             return View(driver);
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateBus([Bind("BusNumber")] BusCreateModel bus)
@@ -494,28 +550,34 @@ public class HomeController : Controller
         if (ModelState.IsValid)
         {
             busService.CreateBus(bus.BusNumber);
+            _logger.LogInformation("Successfully created a new bus: {Number}!",bus.BusNumber);
             return RedirectToAction("ViewBus");
         }
         else
         {
+            _logger.LogWarning("Error creating a bus!");
             return View(bus);
         }
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> FilterEntry(DateTime date, string loopName)
+    public async Task<IActionResult> FilterEntry(DateTime? date, string loopName)
     {
         var loops = loopService.GetAllLoops().Select(e => LoopViewModel.FromLoop(e));
-        var entries = entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e)).Where(e => e.TimeStamp.Date == date).Where(e => e.LoopName == loopName);
+        var entries = entryService.GetAllEntries().Select(e => EntryViewModel.FromEntry(e));
         ViewBag.LoopName = new SelectList(loops, "Name", "Name");
         IEnumerable<EntryViewModel> result = entries;
-        if (date != null)
+        if (date != null && loopName != null)
+        {
+            result = entries.Where(e => e.TimeStamp.Date == date && e.LoopName == loopName);
+        }
+        else if (date!=null)
         {
             result = entries.Where(e => e.TimeStamp.Date == date);
         }
-
-        if (loopName != null)
+        else if (loopName != null)
         {
             result = entries.Where(e => e.LoopName == loopName);
         }
@@ -523,6 +585,7 @@ public class HomeController : Controller
         return View("ViewEntry", result);
     }
 
+    [Authorize(Roles = "manager")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateStop([Bind("Name")] StopCreateModel stop)
@@ -530,10 +593,12 @@ public class HomeController : Controller
         if (ModelState.IsValid)
         {
             stopService.CreateStop(stop.Name);
+            _logger.LogInformation("Successfully created a new stop: {Name}!",stop.Name);
             return RedirectToAction("ViewStop");
         }
         else
         {
+            _logger.LogWarning("Error creating driver!");
             return View(stop);
         }
     }

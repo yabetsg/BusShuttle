@@ -7,5 +7,6 @@ public interface IStopService
     void CreateStop(string stopName);
     Stop? FindStopByID(int id);
     void UpdateStopByID(int id,string stopName);
+    void DeleteStop(int id);
 }
 

@@ -48,6 +48,15 @@ namespace WebMvc.Service
                 busDb.SaveChanges();
             }
         }
+          public void DeleteDriver(int id)
+        {
+            var driver = busDb.Drivers.FirstOrDefault(e => e.Id == id);
+            if (driver != null)
+            {
+                busDb.Drivers.Remove(driver);
+                busDb.SaveChangesAsync();
+            }
+        }
 
     }
 }

@@ -7,5 +7,6 @@ public interface IBusService
     void CreateBus(int BusNumber);
     Bus? FindBusByID(int id);
     void UpdateBusByID(int id, int BusNumber);
+    void DeleteBus(int id);
 }
 

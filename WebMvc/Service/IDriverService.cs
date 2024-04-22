@@ -7,5 +7,7 @@ public interface IDriverService
     void CreateDriver(string FirstName, string Lastname);
     Driver? FindDriverByID(int id);
     void UpdateDriverByID(int id,string FirstName,string LastName);
+    void DeleteDriver(int id);
+
 }
 
