@@ -302,14 +302,15 @@ public class HomeController : Controller
 
 
 
-    // GET: /Home/EditEntry/{id}
-
+    [Authorize(Roles = "manager")]
     public IActionResult EditEntry([FromRoute] int id)
     {
         var entry = entryService.FindEntryByID(id);
         var entryEditModel = EntryEditModel.FromEntry(entry);
         return View(entryEditModel);
     }
+
+    [Authorize(Roles = "manager")]
     public IActionResult EditDriver([FromRoute] int id)
     {
         var driver = driverService.FindDriverByID(id);
@@ -336,6 +337,7 @@ public class HomeController : Controller
     [Authorize(Roles = "manager")]
     public IActionResult DeleteBus([FromRoute] int id)
     {
+        _logger.LogInformation("Successfully deleted a bus with id: {ID}!",id);
         busService.DeleteBus(id);
         return RedirectToAction("ViewBus");
 
@@ -343,14 +345,15 @@ public class HomeController : Controller
     [Authorize(Roles = "manager")]
     public IActionResult DeleteLoop([FromRoute] int id)
     {
+        _logger.LogInformation("Successfully deleted a loop with id: {ID}!",id);
         loopService.DeleteLoop(id);
         return RedirectToAction("ViewLoop");
-
     }
 
     [Authorize(Roles = "manager")]
     public IActionResult DeleteDriver([FromRoute] int id)
     {
+        _logger.LogInformation("Successfully deleted a driver with id: {ID}!",id);
         driverService.DeleteDriver(id);
         return RedirectToAction("ViewDriver");
 
@@ -359,6 +362,7 @@ public class HomeController : Controller
     [Authorize(Roles = "manager")]
     public IActionResult DeleteStop([FromRoute] int id)
     {
+        _logger.LogInformation("Successfully deleted a stop with id: {ID}!",id);
         stopService.DeleteStop(id);
         return RedirectToAction("ViewStop");
 
@@ -517,7 +521,7 @@ public class HomeController : Controller
         }
         else
         {
-
+            _logger.LogWarning("Error creating a new loop: {Name}!",loop.Name);
             return View(loop);
         }
     }
